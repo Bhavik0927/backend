@@ -47,19 +47,18 @@ const userSchema = new Schema(
 
 
     }, { timestamps: true })
+    
 
 // we decrept the password field into some code...
-
 // dont used arrow function here
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+    if (!this.isModified("password")) return next(); // its early return
 
     this.password = bcryt.hash(this.password, 10)
     next();
 })
 
-// here we compare decrepted password and original password
-
+// here we compare decrepted password with original password
 userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcryt.compare(password, this.password)
 }
