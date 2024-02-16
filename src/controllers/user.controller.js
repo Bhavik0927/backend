@@ -3,7 +3,7 @@ import { ApiError } from '../utils/ApiError.js';
 import {User} from "../models/user.models.js";
 import { uploadOnCloudinary } from '../utils/cloudinary.js'; 
 import { ApiResponse } from '../utils/ApiResponse.js';
-import { response } from 'express';
+
 
 const registerUser = asyncHandler( async (req,res) => {
     // get user details from frontend
@@ -18,19 +18,19 @@ const registerUser = asyncHandler( async (req,res) => {
     const {email} = req.body;
     console.log(email);
 
-    // if(fullname === ""){throw new ApiError(400,"fullname is required")}
+    
  
     // 2> validation  (adv code of above)
     if(
-        [fullname,email,usename,password].some((field) =>
+        [fullName,email,username,password].some((field) =>
         field?.trim() === '')
     ){
         throw new ApiError(404,"All fields are required")
     }
 
     // 3> check if the user already exists: username,email
-    const existedUser = User.findOne({
-        $or:[{ usename },{ email }]
+    const existedUser = await User.findOne({
+        $or:[{ username },{ email }]
     })
        
     if(existedUser){ throw new ApiError(409,"User with email or usename already exists") }
@@ -52,7 +52,7 @@ const registerUser = asyncHandler( async (req,res) => {
 
     // 6> create user object - crreate entry in db
     const user = await User.create({
-        fullname,
+        fullName,
         avatar:avatar.url,
         coverImage:coverImage?.url || "",
         email,
